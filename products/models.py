@@ -12,7 +12,7 @@ class Product(TimeStampModel):
     price          = models.DecimalField(max_digits=10, decimal_places=2)    
     address        = models.CharField(max_length=500)
     detail_address = models.CharField(max_length=500,null=True)
-    grade          = models.DecimalField(max_digits=10,decimal_places=2)
+    grade          = models.DecimalField(max_digits=10,decimal_places=2, default=0)
     description    = models.TextField(null=True)
 
     class Meta:
