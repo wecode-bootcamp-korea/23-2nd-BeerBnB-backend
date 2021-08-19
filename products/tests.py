@@ -1,8 +1,14 @@
-from django.test      import TestCase, Client
+import json
+import jwt
 
-from .models          import Product, Image ,Category
-from users.models     import User
-from bookings.models  import Booking
+from django.http       import response
+from django.test       import TestCase, Client
+from django.test.utils import teardown_databases
+
+from .models           import Product,Image,Category
+from BeerBnB.settings  import SECRET_KEY
+from users.models      import User
+from bookings.models   import Booking
 
 class ProductListTest(TestCase):
     def setUp(self):
@@ -103,3 +109,72 @@ class ProductListTest(TestCase):
         response = client.get("/products?address=서울시&checkin=2021-08-20&checkout=rrr&count=3")
         self.assertEqual(response.json()["message"], "VALUE_ERROR")
         
+class HostTest(TestCase):
+    def setUp(self):  
+        user = User.objects.create(
+            kakao     = 123425,
+            name      = "dodam",
+            birthday  = "2000-01-01",
+            thumbnail = "http://img.url",
+            is_host   = False,
+        )
+
+        product = Product.objects.create(
+            user_id        = User.objects.get(kakao=123425).id,
+            name           = "오션뷰 최고",
+            head_count     = 4,
+            price          = 20000,
+            latitude       = 34.12345678,
+            longitude      = 25.564678,
+            description    = "편하고 아늑한 방",
+            grade          = 0,
+            address        = "강원도 강릉시",
+            detail_address = "안목카페거리",
+            )
+
+        Image.objects.bulk_create(
+            [Image(
+                product_id = Product.objects.get(name="오션뷰 최고").id, 
+                image      = "url" )]
+        ) 
+
+        Category.objects.create(
+            product_id    = Product.objects.get(name="오션뷰 최고").id,
+            big_address   = product.address.split(" ")[0],
+            small_address = product.address.split(" ")[1],
+        )
+
+        self.token = jwt.encode({"id" : User.objects.get(kakao=123425).id}, SECRET_KEY, algorithm = "HS256")
+
+    def tearDown(self):
+        User.objects.all().delete()
+        Product.objects.all().delete()
+        Image.objects.all().delete()
+        Category.objects.all().delete()
+
+    def test_host_success(self):
+        client   = Client()
+        headers  = {'HTTP_Authorization' : self.token}
+        
+        product = { 
+                "user"           : User.objects.get(kakao=123425).id,
+                "name"           : "오션뷰 최고",
+                "head_count"     : 4,
+                "price"          : 20000,
+                "latitude"       : 34.123456,
+                "longitude"      : 25.564678,
+                "description"    : "편하고 아늑한 방",
+                "address"        : "강원도 강릉시",
+                "detail_address" : "안목카페거리"  ,
+                "grade"          : 0,    
+                "image"          : "123",       
+            }
+        
+        response = client.post('/products', json.dumps(product),content_type='application/json',**headers) 
+
+        self.assertEqual(response.status_code, 200)     
+        self.assertEqual(response.json(), 
+            {
+                'MESSAGE' : 'SUCCESS'
+            }
+        )
