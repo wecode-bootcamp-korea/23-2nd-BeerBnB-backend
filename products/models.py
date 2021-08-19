@@ -5,8 +5,7 @@ from core.models               import TimeStampModel
 
 class Product(TimeStampModel):
     name           = models.CharField(max_length=300)
-    head_count     = models.IntegerField
-    reviews        = models.IntegerField(default=0)
+    head_count     = models.IntegerField()
     user           = models.ForeignKey(User,on_delete=models.CASCADE)
     latitude       = models.DecimalField(max_digits=9, decimal_places=6)
     longitude      = models.DecimalField(max_digits=9, decimal_places=6)
