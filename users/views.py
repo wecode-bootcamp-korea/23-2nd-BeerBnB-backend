@@ -23,7 +23,7 @@ class KakaoSigninView(View):
                 timeout = 5
             )
             
-            if not response.status == 200:
+            if not response.status_code == 200:
                 raise ConnectionError
             
             profile_json  = response.json()
@@ -41,7 +41,7 @@ class KakaoSigninView(View):
                 defaults  = {
                     "name"      : name,
                     "thumbnail" : thumbnail,
-                    "birthday"  : "birthday",
+                    "birthday"  : birthday,
                     "is_host"   : False
             })
             
