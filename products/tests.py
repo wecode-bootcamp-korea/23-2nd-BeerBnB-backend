@@ -108,7 +108,7 @@ class ProductListTest(TestCase):
         client   = Client()
         response = client.get("/products?address=서울시&checkin=2021-08-20&checkout=rrr&count=3")
         self.assertEqual(response.json()["message"], "VALUE_ERROR")
-        
+
 class HostTest(TestCase):
     def setUp(self):  
         user = User.objects.create(
@@ -252,3 +252,72 @@ class DetailViewTest(TestCase):
         response = client.get('/products/30')
 
         self.assertEqual(response.status_code,400)   
+
+class AddressTest(TestCase) :
+    def setUp(self) :
+        User.objects.bulk_create(
+            [User(
+                kakao = 1234,
+                name = "박종규",
+                thumbnail = "photo1",
+                birthday = "2000-12-03",
+                is_host = True),
+                User(
+                    kakao = 7777,
+                    name = "방문객",
+                    thumbnail = "photo2",
+                    birthday = "2000-12-04",
+                    is_host = False)]
+        )
+        
+        Product.objects.bulk_create(
+            [Product(
+                name = "1호집",
+                head_count = 4,
+                latitude = 1,
+                longitude = 1,
+                price = 100,
+                address = "서울시 강남구",
+                detail_address = "1002호",
+                grade = 0,
+                description = "좋아요",
+                user_id = User.objects.get(kakao = 1234).id),
+                Product(
+                    name = "2호집",
+                    head_count = 2,
+                    latitude = 1,
+                    longitude = 1,
+                    price = 100,
+                    address = "서울시 강동구",
+                    detail_address = "1003호",
+                    grade = 0,
+                    description = "좋아요",
+                    user_id = User.objects.get(kakao = 1234).id)]
+        )
+
+        Image.objects.bulk_create(
+            [Image(product_id = Product.objects.get(name = "1호집").id, image = "1호점 사진1"),
+             Image(product_id = Product.objects.get(name = "1호집").id, image = "1호점 사진2"),
+             Image(product_id = Product.objects.get(name = "2호집").id, image = "2호점 사진1")])
+        
+        Category.objects.bulk_create(
+            [Category(
+                product_id    = Product.objects.get(name = "1호집").id,
+                big_address   = "서울시",
+                small_address = "강남구"),
+                Category(
+                product_id    = Product.objects.get(name = "2호집").id,
+                big_address   = "서울시",
+                small_address = "강동구")]
+        )
+ 
+    def tearDown(self):
+        Image.objects.all().delete()
+        Category.objects.all().delete()
+        Product.objects.all().delete()
+        User.objects.all().delete()
+    
+    def test_address_success(self):
+        client   = Client()
+        response = client.get("/address")
+        self.assertEqual(response.json()["message"], 200)
