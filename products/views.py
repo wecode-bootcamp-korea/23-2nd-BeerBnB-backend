@@ -104,7 +104,7 @@ class Host(View):
 
         if User.objects.filter(is_host=False).update(is_host=True) : 
             return JsonResponse ({"MESSAGE" : "SUCCESS"}, status = 200)
-
+        
 class DetailView(View):
     def get(self,request, product_id):
     
@@ -112,7 +112,6 @@ class DetailView(View):
             return JsonResponse({"MESSAGE": "ROOM_DOES_NOT_EXISTS"},status = 400)
 
         product = Product.objects.get(id=product_id)
-        booking = Booking.objects.get(id=product_id)
 
         response = {
             "id"             : product.id,
@@ -126,10 +125,19 @@ class DetailView(View):
             "grade"          : product.grade,
             "description"    : product.description,
             "image"          : [product.image for product in product.image_set.all()],
-            "check_in"       : booking.check_in,
-            "check_out"      : booking.check_out,
             "host_name"      : product.user.name,
             "host_thumbnail" : product.user.thumbnail,
         }  
 
-        return JsonResponse({"response":response}, status = 200)  
+        return JsonResponse({"response" : response}, status = 200)
+        
+class AddressView(View):
+    def get(self, request):
+        categories = Category.objects.values_list("big_address", "small_address").distinct()
+        address = set()
+        
+        for i in categories:
+            address.update([i[0], i[1], f"{i[0]} {i[1]}"])
+            
+        address = list(address)
+        return JsonResponse({"message" : address}, status = 200)
