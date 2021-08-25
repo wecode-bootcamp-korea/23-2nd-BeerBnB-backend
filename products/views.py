@@ -76,7 +76,7 @@ class Host(View):
 
         product = Product.objects.create(
             user_id        = user.id, 
-            name           = data["name"],
+            name           = data["house_name"],
             head_count     = data["head_count"],
             price          = data["price"],
             latitude       = data["latitude"],
@@ -87,8 +87,8 @@ class Host(View):
             grade          = data["grade"]
           )
 
-        for image_id in data["image"]:
-            Image.objects.create(product = product, image = data["image"])
+        for image in data["image"]:
+            Image.objects.create(product = product, image = image)
 
         Category.objects.create(
             product       = product,

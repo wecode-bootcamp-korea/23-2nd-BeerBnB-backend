@@ -170,7 +170,7 @@ class HostTest(TestCase):
                 "image"          : "123",       
             }
         
-        response = client.post('/products', json.dumps(product),content_type='application/json',**headers) 
+        response = client.post('/products/post', json.dumps(product),content_type='application/json',**headers) 
 
         self.assertEqual(response.status_code, 200)     
         self.assertEqual(response.json(), 
