@@ -22,7 +22,9 @@ class KakaoSigninView(View):
                 headers = {"Authorization" : f"Bearer {access_token}"},
                 timeout = 5
             )
-            
+            # print(response.status)
+            # print(type(response))
+
             if not response.status_code == 200:
                 raise ConnectionError
             
