@@ -145,12 +145,7 @@ class HostTest(TestCase):
         )
 
         self.token = jwt.encode({"id" : User.objects.get(kakao=123425).id}, SECRET_KEY, algorithm = "HS256")
-
-    def tearDown(self):
-        User.objects.all().delete()
-        Product.objects.all().delete()
-        Image.objects.all().delete()
-        Category.objects.all().delete()
+           
 
     def test_host_success(self):
         client   = Client()
@@ -170,7 +165,7 @@ class HostTest(TestCase):
                 "image"          : "123",       
             }
         
-        response = client.post('/products', json.dumps(product),content_type='application/json',**headers) 
+        response = client.post('/products/post', json.dumps(product),content_type='application/json',**headers) 
 
         self.assertEqual(response.status_code, 200)     
         self.assertEqual(response.json(), 
@@ -178,3 +173,82 @@ class HostTest(TestCase):
                 'MESSAGE' : 'SUCCESS'
             }
         )
+
+class DetailViewTest(TestCase):
+    def setUp(self):
+        self. maxDiff = None
+        user = User.objects.create(
+            kakao     = 1234,
+            name      = "dodam",
+            thumbnail = "http://img.url",
+            is_host   = False
+        )
+
+        product = Product.objects.create(
+            id             = 1,
+            user_id        = user.id,
+            name           = "오션뷰 최고",
+            head_count     = 4,
+            latitude       = 34.123456,
+            longitude      = 25.564678,
+            price          = 20000,
+            address        = "강원도 강릉시",
+            detail_address = "안목카페거리",
+            grade          = 0,
+            description    = "편하고 아늑한 방",
+            image          = "img",
+            )
+
+        
+        Image.objects.bulk_create(
+            [ Image (
+            product_id = Product.objects.get(name="오션뷰 최고").id,
+            image   = "http://image.url"),
+            ])
+
+        Booking.objects.create(
+            id          = 1,
+            user_id     = user.id,
+            product_id  = product.id,
+            check_in    = "2021-09-01",
+            check_out   = "2021-09-05",
+            head_count  = 2,
+            total_price = 20000 
+        )
+
+    def tearDown(self):
+        User.objects.all().delete()
+        Product.objects.all().delete()
+        Image.objects.all().delete()
+        Category.objects.all().delete()
+        
+    def test_detailView_success(self):
+        client = Client()
+        response = client.get('/products/1',content_type = 'application/json')
+ 
+        self.assertEqual(response.json(),
+            {"response" : {
+                "id"             : 1,
+                "name"           : "오션뷰 최고",
+                "head_count"     : 4,
+                "latitude"       : "34.123456",
+                "longitude"      : "25.564678",
+                "price"          : "20000.00",
+                "address"        : "강원도 강릉시",
+                "detail_address" : "안목카페거리",
+                "grade"          : "0.00",
+                "description"    : "편하고 아늑한 방",
+                "image"          : ['http://image.url'],
+                "check_in"       : "2021-09-01",
+                "check_out"      : "2021-09-05",
+                "host_name"      : "dodam",
+                "host_thumbnail" : "http://img.url"
+            }}
+        )
+        self.assertEqual(response.status_code,200)        
+        
+    def test_detailView_error(self):
+        client = Client()
+        response = client.get('/products/30')
+
+        self.assertEqual(response.status_code,400)   

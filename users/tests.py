@@ -46,7 +46,7 @@ class KakaoSigninTest(TestCase):
                         "gender"                    : "female"
                     }
                 }
-            status = 200
+            status_code = 200
 
         mocked_requests.get = MagicMock(return_value = MockedResponse())
 
@@ -61,7 +61,8 @@ class KakaoSigninTest(TestCase):
 
     @patch("users.views.requests")
     def test_kakao_signin_user_fail_needtoken(self, mocked_requests) :
-        class MockedResponse :
+        class MockedResponse:
+
             def json(self) :
                 return {
                     "id"            : 123456789,
@@ -85,7 +86,8 @@ class KakaoSigninTest(TestCase):
                         "gender"                    : "female"
                     }
                 }
-            status = 200
+            
+            status_code = 200
         mocked_requests.get = MagicMock(return_value = MockedResponse())
 
         client   = Client()
@@ -100,7 +102,7 @@ class KakaoSigninTest(TestCase):
                 return {
                 }
 
-            status = 400
+            status_code = 400
         mocked_requests.get = MagicMock(return_value = MockedResponse())
 
         client   = Client()
