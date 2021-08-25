@@ -153,7 +153,7 @@ class HostTest(TestCase):
         
         product = { 
                 "user"           : User.objects.get(kakao=123425).id,
-                "name"           : "오션뷰 최고",
+                "house_name"     : "오션뷰 최고",
                 "head_count"     : 4,
                 "price"          : 20000,
                 "latitude"       : 34.123456,
