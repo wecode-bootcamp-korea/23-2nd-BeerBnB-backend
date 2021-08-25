@@ -68,7 +68,7 @@ class Host(View):
         data = json.loads(request.body)
         user = request.user
 
-        if data["name"] == "" or data["head_count"] == "" or data["price"] == "":
+        if data["house_name"] == "" or data["head_count"] == "" or data["price"] == "":
           return JsonResponse ({"MESSAGE": "REQUIRE_INFORM_NULL"}, status = 400)
 
         MAX_PEOPLE = 5
@@ -77,7 +77,7 @@ class Host(View):
 
         product = Product.objects.create(
             user_id        = user.id, 
-            name           = data["name"],
+            name           = data["house_name"],
             head_count     = data["head_count"],
             price          = data["price"],
             latitude       = data["latitude"],
@@ -87,8 +87,8 @@ class Host(View):
             detail_address = data["detail_address"],
           )
 
-        for image_id in data["image"]:
-            Image.objects.create(product = product, image = data["image"])
+        for image in data["image"]:
+            Image.objects.create(product = product, image =image)
 
         Category.objects.create(
             product       = product,
