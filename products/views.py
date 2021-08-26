@@ -1,13 +1,14 @@
 import json
-from datetime         import datetime, timedelta
+from datetime         import datetime, timedelta, date
+from os import truncate
 
-from django.http      import JsonResponse, request
+from django.http      import JsonResponse, request, response
 from django.views     import View
 from django.db        import transaction
 from django.db.models import Q, Prefetch
 
 from products.models  import Product, Image, Category
-from bookings.models import Booking
+from bookings.models  import Booking
 from users.models     import User
 from users.utils      import login_decorator
 
@@ -73,7 +74,7 @@ class Host(View):
 
         MAX_PEOPLE = 5
         if data["head_count"] >= MAX_PEOPLE :
-            return JsonResponse ({"MESSAGE":"PEOPLE_INPUT_ERROR"})   
+            return JsonResponse ({"MESSAGE":"PEOPLE_INPUT_ERROR"}, status = 400)   
 
         product = Product.objects.create(
             user_id        = user.id, 
@@ -102,9 +103,12 @@ class Host(View):
         if not data["address"] or not data["detail_address"] : 
             return JsonResponse({"MESSAGE": "ADDRESS_DOES_NOT_EXISTS" },status = 400)   
 
-        if User.objects.filter(is_host=False).update(is_host=True) : 
-            return JsonResponse ({"MESSAGE" : "SUCCESS"}, status = 200)
-        
+        if not user.is_host: 
+               user.is_host = True 
+               user.save()
+
+        return JsonResponse ({"MESSAGE" : "SUCCESS"}, status = 200)
+
 class DetailView(View):
     def get(self,request, product_id):
     
@@ -129,7 +133,7 @@ class DetailView(View):
             "host_thumbnail" : product.user.thumbnail,
         }  
 
-        return JsonResponse({"response" : response}, status = 200)
+        return JsonResponse({"message" : response}, status = 200)
         
 class AddressView(View):
     def get(self, request):
@@ -141,3 +145,18 @@ class AddressView(View):
             
         address = list(address)
         return JsonResponse({"message" : address}, status = 200)
+
+class DetailCalender(View):
+    def get(self, request, product_id):
+        today   = date.today()
+        booking = Booking.objects.filter(Q(product_id=product_id)& Q(check_out__gte = today))
+        
+        if not booking.exists() :
+            return JsonResponse ({"message":"NO_BOOKING"}, status = 400)
+
+        response = []
+        for i in booking:
+            booking_date = [response.append((i.check_in+ timedelta(days=j)).strftime("%Y-%m-%d")) \
+                for j in range((i.check_out-i.check_in).days)]
+
+        return JsonResponse({"message":response}, status = 200)  
