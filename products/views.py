@@ -85,7 +85,7 @@ class Host(View):
             longitude      = data["longitude"],
             description    = data["description"],
             address        = data["address"],
-            detail_address = data["detail_address"],
+            detail_address = data.get("detail_address", "")
           )
 
         Image.objects.create(product = product, image ="https://i.ibb.co/Cth0Rf9/House-isolated-in-the-field.jpg")
@@ -95,11 +95,8 @@ class Host(View):
             big_address   = product.address.split(" ")[0],
             small_address = product.address.split(" ")[1],
         )
-        
-        if not data["image"]: 
-            return JsonResponse({"MESSAGE": "IMAGE_DOES_NOT_EXISTS" },status = 400)
 
-        if not data["address"] or not data["detail_address"] : 
+        if not data["address"]:
             return JsonResponse({"MESSAGE": "ADDRESS_DOES_NOT_EXISTS" },status = 400)   
 
         if not user.is_host: 
