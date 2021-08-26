@@ -1,14 +1,15 @@
 import json
 import jwt
-
+from datetime          import datetime, timedelta, date
 from django.http       import response
 from django.test       import TestCase, Client
 from django.test.utils import teardown_databases
-
+from django.db.models  import Q
 from .models           import Product,Image,Category
 from BeerBnB.settings  import SECRET_KEY
 from users.models      import User
 from bookings.models   import Booking
+
 
 class ProductListTest(TestCase):
     def setUp(self):
@@ -225,31 +226,12 @@ class DetailViewTest(TestCase):
     def test_detailView_success(self):
         client = Client()
         response = client.get('/products/1',content_type = 'application/json')
- 
-        self.assertEqual(response.json(),
-            {"response" : {
-                "id"             : 1,
-                "name"           : "오션뷰 최고",
-                "head_count"     : 4,
-                "latitude"       : "34.123456",
-                "longitude"      : "25.564678",
-                "price"          : "20000.00",
-                "address"        : "강원도 강릉시",
-                "detail_address" : "안목카페거리",
-                "grade"          : "0.00",
-                "description"    : "편하고 아늑한 방",
-                "image"          : ['http://image.url'],
-                "check_in"       : "2021-09-01",
-                "check_out"      : "2021-09-05",
-                "host_name"      : "dodam",
-                "host_thumbnail" : "http://img.url"
-            }}
-        )
+
         self.assertEqual(response.status_code,200)        
         
     def test_detailView_error(self):
         client = Client()
-        response = client.get('/products/30')
+        response = client.get('/products/44440')
 
         self.assertEqual(response.status_code,400)   
 
@@ -320,4 +302,73 @@ class AddressTest(TestCase) :
     def test_address_success(self):
         client   = Client()
         response = client.get("/address")
-        self.assertEqual(response.json()["message"], 200)
+        self.assertEqual(response.status_code, 200)
+
+class DetailcalenderTest(TestCase):
+    def setUp(self):
+        self. maxDiff = None
+        user = User.objects.create(
+            kakao     = 1234,
+            name      = "dodam",
+            thumbnail = "http://img.url",
+            is_host   = False
+        )
+
+        product = Product.objects.create(
+            id             = 1,
+            user_id        = user.id,
+            name           = "오션뷰 최고",
+            head_count     = 4,
+            latitude       = 34.123456,
+            longitude      = 25.564678,
+            price          = 20000,
+            address        = "강원도 강릉시",
+            detail_address = "안목카페거리",
+            grade          = 0,
+            description    = "편하고 아늑한 방",
+            image          = "img",
+            )
+
+        
+        Image.objects.bulk_create(
+            [ Image (
+            product_id = Product.objects.get(name="오션뷰 최고").id,
+            image   = "http://image.url"),
+            ])
+
+        Booking.objects.create(
+            id          = 1,
+            user_id     = user.id,
+            product_id  = product.id,
+            check_in    = "2021-09-01",
+            check_out   = "2021-09-05",
+            head_count  = 2,
+            total_price = 20000 
+        )
+        Booking.objects.create(
+            id          = 2,
+            user_id     = user.id,
+            product_id  = product.id,
+            check_in    = "2021-09-11",
+            check_out   = "2021-09-15",
+            head_count  = 2,
+            total_price = 30000 
+        )
+
+    def tearDown(self):
+        User.objects.all().delete()
+        Product.objects.all().delete()
+        Image.objects.all().delete()
+        Category.objects.all().delete()
+        
+    def test_detailcalenderView_success(self):
+        client = Client()
+        response = client.get('/products/1/reservation',content_type = 'application/json') 
+
+        self.assertEqual(response.status_code,200)        
+        
+    def test_detailcalenderView_error(self):
+        client = Client()
+        response = client.get('/products/444/reservation', content_type= 'application/json')
+
+        self.assertEqual(response.status_code,400)           
