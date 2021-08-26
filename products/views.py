@@ -87,8 +87,7 @@ class Host(View):
             detail_address = data["detail_address"],
           )
 
-        for image in data["image"]:
-            Image.objects.create(product = product, image =image)
+        Image.objects.create(product = product, image ="https://i.ibb.co/Cth0Rf9/House-isolated-in-the-field.jpg")
 
         Category.objects.create(
             product       = product,
