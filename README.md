@@ -26,7 +26,7 @@
 ### [시연 영상](https://www.youtube.com/watch?v=ecPMjOMoKWY)
 
 ### 메인 페이지
-(![메인페이지](https://user-images.githubusercontent.com/81546305/131219959-a409451d-e6a6-4388-8936-a611a41d7882.gif)
+![메인페이지](https://user-images.githubusercontent.com/81546305/131219959-a409451d-e6a6-4388-8936-a611a41d7882.gif)
 
 
 ### 호스트 되기 (숙소 등록)
