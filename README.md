@@ -26,22 +26,29 @@
 ### [시연 영상](https://www.youtube.com/watch?v=ecPMjOMoKWY)
 
 ### 메인 페이지
-![]()
+(![메인페이지](https://user-images.githubusercontent.com/81546305/131219959-a409451d-e6a6-4388-8936-a611a41d7882.gif)
+
+
+### 호스트 되기 (숙소 등록)
+![호스트되기](https://user-images.githubusercontent.com/81546305/131219980-c6e26913-577a-4c92-a5b9-eb24498777b9.gif)
+
+
+### 상품 검색
+![상품검색](https://user-images.githubusercontent.com/81546305/131219985-f9282f03-421e-41dd-875b-d185f20cfb93.gif)
 
 ### 상품 리스트
-![]()
+![상품리스트](https://user-images.githubusercontent.com/81546305/131219992-006f527f-2b20-47eb-bf2e-e0724cb27c12.gif)
 
 ### 상세 페이지 / 예약 하기
-![]()
+![상세페이지예약](https://user-images.githubusercontent.com/81546305/131220015-e76d901d-6a7b-4220-8d09-17a485fe585a.gif)
+
 
 ### 소셜 로그인
-(![ezgif com-gif-maker (2)](https://user-images.githubusercontent.com/81546305/131218610-cef2bd34-6899-47f2-8113-0a15e0a64625.gif))
+![ezgif com-gif-maker (2)](https://user-images.githubusercontent.com/81546305/131218610-cef2bd34-6899-47f2-8113-0a15e0a64625.gif)
 
 ### 예약 확인
-![]()
+![마이페이지로그아웃](https://user-images.githubusercontent.com/81546305/131220022-2b26c9dc-4db2-42a1-8575-2bba23751896.gif)
 
-### 숙소 등록
-![]()
 
 ## **구현기능💻**
 
