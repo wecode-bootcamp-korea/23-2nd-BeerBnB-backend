@@ -35,7 +35,7 @@
 ![]()
 
 ### 소셜 로그인
-![](![ezgif com-gif-maker (2)](https://user-images.githubusercontent.com/81546305/131218610-cef2bd34-6899-47f2-8113-0a15e0a64625.gif))
+(![ezgif com-gif-maker (2)](https://user-images.githubusercontent.com/81546305/131218610-cef2bd34-6899-47f2-8113-0a15e0a64625.gif))
 
 ### 예약 확인
 ![]()
